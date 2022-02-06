@@ -1,0 +1,20 @@
+#camera_container {
+	margin: 0px auto;
+	width: 500px;
+	height: 375px;
+	border: 10px #333 solid;
+}
+#videoElement {
+	width: 500px;
+	height: 375px;
+	background-color: #666;
+}
+.wrapper{
+	padding: 5px;
+	background: #FEFEFE;
+	display: inline-block;
+	box-shadow:0px 0px 4px rgba(0,0,0,0.2);
+	border-radius: 3px;
+	padding-bottom: 1px;
+	margin-bottom: 20px;
+}
