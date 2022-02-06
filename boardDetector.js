@@ -317,6 +317,17 @@ function Square(ctx, canvas, topLeft, bottomRight){
     }
 }
 
+var board = [
+    ["","","","","","","","",""],
+    ["","","","","","","","",""],
+    ["","","","","","","","",""],
+    ["","","","","","","","",""],
+    ["","","","","","","","",""],
+    ["","","","","","","","",""],
+    ["","","","","","","","",""],
+    ["","","","","","","","",""],
+    ["","","","","","","","",""]
+]
 var boardDetector = new boardDetector();
 boardDetector.init().then(() => {
     boardDetector.findEdges();
@@ -325,6 +336,11 @@ boardDetector.init().then(() => {
     boardDetector.findSquares();
     
     setTimeout(function () {
-        boardDetector.squares.forEach((s) => {console.log(s.toString());})
-    },30000);
+        board.forEach((r, i) => {
+            r.forEach((l, j) => {
+                board[j][i] = boardDetector.squares[((i+1) * (j+1)) - 1].number;
+                console.log(boardDetector.squares[i * j].toString());
+            });
+        });
+    },60000);
 });
