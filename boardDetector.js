@@ -1,4 +1,4 @@
-function edgeDetector(){
+function boardDetector(){
     // Variables
     this.img = undefined;
     this.imgElement = undefined;
@@ -12,7 +12,6 @@ function edgeDetector(){
     };
     this.pixelData = undefined;
     this.threshold = 30;
-    this.pointerColor = 'rgba(255,0,0,1)';
     this.intersectionPoints = []
     this.squares = []
     
@@ -28,45 +27,53 @@ function edgeDetector(){
         const can1 = (<canvas id="layer" width={width} height={height}></canvas>);
         const can2 = (<canvas id="rawData" width={width} height={height}></canvas>);
         this.render(this.makeImage(can1,can2));
-        this.canvasElement = document.querySelector("#layer");
-        this.rawCanvas = document.querySelector("#rawData");
-        this.ctx = this.canvasElement.getContext('2d');
-        this.rawctx = this.rawCanvas.getContext('2d');
-    
-      // Store the Canvas Size
-        this.ctxDimensions.width = width;
-        this.ctxDimensions.height = height;
+        const detec = this
+        return new Promise((resolve, reject) => {
+            setTimeout(detec.finishInit(detec, resolve), 200);
+        })
     };
+
+    this.finishInit = function(detec, resolve){
+        detec.canvasElement = document.querySelector("#layer");
+        detec.rawCanvas = document.querySelector("#rawData");
+        detec.ctx = detec.canvasElement.getContext('2d');
+        detec.rawctx = detec.rawCanvas.getContext('2d');
+    
+        // Store the Canvas Size
+        detec.ctxDimensions.width = detec.imgElement.width;
+        detec.ctxDimensions.height = detec.imgElement.height;
+        resolve();
+    }
 
     this.render = function(img){
         ReactDOM.render(img, this.domContainer);
     };
 
     this.makeImage = function(can1='', can2=''){
-        return (<div>
-            <div className="wrapper"> 
-                <img src="puzzle.png" alt="Dice" id="image"/>
-                {can1}
-                {can2}
-            </div>
-            Threshold: <input type="input" id="threshold" value="30"/>
-            <span className="help">Hit enter or return after changing the value</span>
+        return (<div className="wrapper"> 
+            <img src="puzzle.png" alt="Dice" id="image"/>{can1}{can2}
         </div>);
     };
     
     this.findEdges = function(){
         this.copyImage();
-        const hLines = this.getHorizontal();
-        const vLines = this.getVertical();
-        hLines.forEach((hl) => {
-                vLines.forEach((vl) => {
-                    this.intersects(hl, vl);
-                });
+        this.hLines = this.getHorizontal();
+        this.vLines = this.getVertical();
+    };
+
+    this.findIntersects = function(hLines, vLines){
+        this.hLines.forEach((hl) => {
+            this.vLines.forEach((vl) => {
+                this.intersects(hl, vl);
+            });
         });
+    }
+
+    this.findSquares = function(){
         this.intersectionPoints.forEach(
             (p, i) => {
                 if(i+11 < this.intersectionPoints.length && (i-9)%10 != 0){
-                    const sq = new Square(this.rawctx, p, this.intersectionPoints[i+11]);
+                    const sq = new Square(this.rawctx,this.canvasElement, p, this.intersectionPoints[i+11]);
                     this.squares.push(sq);
                 }
             });
@@ -76,9 +83,11 @@ function edgeDetector(){
             }else{
                 s.draw('green')
             }
+            setTimeout(function () {
+                s.getLetter();
+            }, i * 100);
         })
-        console.log(this.squares);
-    };
+    }
     
     this.copyImage = function(){
         this.rawctx.clearRect(0,0,this.ctxDimensions.width,this.ctxDimensions.height);
@@ -128,10 +137,10 @@ function edgeDetector(){
             }
             if(isLine){
                 lines.push(y);
-                console.log('line detected at y = ' + y)
             }
         }
         lines = this.refineLines(lines);
+        lines.forEach((l) => {console.log('line detected at y = ' + l);})
         this.rendreLines(lines, 'y');
         return lines;
     };
@@ -176,10 +185,10 @@ function edgeDetector(){
             }
             if(isLine){
                 lines.push(x);
-                console.log('line detected at x = ' + x)
             }
         }
         lines = this.refineLines(lines);
+        lines.forEach((l) => {console.log('line detected at x = ' + l);})
         this.rendreLines(lines, 'x');
         return lines;
     };
@@ -237,27 +246,85 @@ function edgeDetector(){
 
     this.intersects = function(x, y){
         this.plotPoint(x,y,'red',this.rawctx, 2)
-        this.intersectionPoints.push([x, y]);
+        this.intersectionPoints.push(new intersection(x, y));
     }
 }
 
-function Square(ctx, topLeft, bottomRight){
+function intersection(x, y){
+    this.x = x;
+    this.y = y;
+}
+
+function Square(ctx, canvas, topLeft, bottomRight){
     this.ctx = ctx
-    this.topLeft = topLeft;
-    this.bottomRight = bottomRight;
+    this.topLeft =     this.bottomRight = new intersection(topLeft.x + 2, topLeft.y + 2);;
+    this.topLeft.x = this.topLeft.x + 2;
+    this.topLeft.y = this.topLeft.y;
+    this.bottomRight = new intersection(bottomRight.x - 2, bottomRight.y - 4);
+    this.canvas = canvas;
+
     this.draw = function(colour='yellow'){
         this.ctx.fillStyle = colour;
         this.ctx.beginPath();
-        this.ctx.moveTo(topLeft[0]+1, topLeft[1]+1);
-        this.ctx.lineTo(topLeft[0]+1, bottomRight[1]-1);
-        this.ctx.lineTo(bottomRight[0]-1, bottomRight[1]-1);
-        this.ctx.lineTo(bottomRight[0]-1, topLeft[1]+1);
-        this.ctx.lineTo(topLeft[0]+1, topLeft[1]+1);
+        this.ctx.moveTo(this.topLeft.x, this.topLeft.y);
+        this.ctx.lineTo(this.topLeft.x, this.bottomRight.y);
+        this.ctx.lineTo(this.bottomRight.x, this.bottomRight.y);
+        this.ctx.lineTo(this.bottomRight.x, this.topLeft.y);
+        this.ctx.lineTo(this.topLeft.x, this.topLeft.y);
         this.ctx.closePath();
         this.ctx.fill();
     };
+
+    this.callback = function(dataURL) {
+        document.body.style.backgroundImage = 'url(' + dataURL + ')';
+        Tesseract.recognize(
+            dataURL,
+            'eng',
+            { logger: m => console.log(m) }
+        ).then(({ data: { text } }) => {
+            if(text){
+                this.draw('orange');
+                this.number = text
+                console.log(`The number you are looking at is a ${text} in square ${this.toString()}`);
+            }else{
+                console.log(`Nothing found in square ${this.toString()}`);
+            }
+        })
+    };
+
+    this.getLetter = function() {
+        // create an in-memory canvas
+        const offsetX = this.topLeft.x
+        const offsetY = this.topLeft.y
+        const width = this.bottomRight.x - this.topLeft.x
+        const height = this.bottomRight.y - this.topLeft.y
+        var buffer = document.createElement('canvas');
+        var b_ctx = buffer.getContext('2d');
+        // set its width/height to the required ones
+        buffer.width = width;
+        buffer.height = height;
+        // draw the main canvas on our buffer one
+        // drawImage(source, source_X, source_Y, source_Width, source_Height, 
+        //  dest_X, dest_Y, dest_Width, dest_Height)
+        b_ctx.drawImage(this.canvas, offsetX, offsetY, width, height,
+                        0, 0, buffer.width, buffer.height);
+        // now call the callback with the dataURL of our buffer canvas
+        this.callback(buffer.toDataURL());
+    };
+
+    this.toString = function(){
+        return `sqaure - ${this.topLeft.x} : ${this.bottomRight.x} has letter -> ${this.number}`
+    }
 }
 
-var edgeDetector = new edgeDetector();
-edgeDetector.init();
-edgeDetector.findEdges();
+var boardDetector = new boardDetector();
+boardDetector.init().then(() => {
+    boardDetector.findEdges();
+    boardDetector.findIntersects();
+    console.log(boardDetector.intersectionPoints);
+    boardDetector.findSquares();
+    
+    setTimeout(function () {
+        boardDetector.squares.forEach((s) => {console.log(s.toString());})
+    },30000);
+});
