@@ -15,25 +15,32 @@ function boardDetector(){
     this.intersectionPoints = []
     this.squares = []
     
-    
     this.init = function(){
         // Build the canvas
         this.maxGap = 5;
         this.domContainer = document.querySelector('#image_container');
         this.render(this.makeImage());
         this.imgElement = document.querySelector('#image');
-        var width = this.imgElement.width;
-        var height = this.imgElement.height;
-        const can1 = (<canvas id="layer" width={width} height={height}></canvas>);
-        const can2 = (<canvas id="rawData" width={width} height={height}></canvas>);
-        this.render(this.makeImage(can1,can2));
-        const detec = this
+        const detec = this;
         return new Promise((resolve, reject) => {
-            setTimeout(detec.finishInit(detec, resolve), 200);
-        })
+            setTimeout(detec.waitForImageLoad(detec, resolve), 100);
+        });
     };
 
+    this.waitForImageLoad = function(detec, resolve) {
+        if(!(detec.imgElement.complete && detec.imgElement.naturalHeight !== 0)){
+            setTimeout(() => {detec.waitForImageLoad(detec, resolve);}, 100);
+        }else{
+            detec.finishInit(detec, resolve);
+        }
+    }
+
     this.finishInit = function(detec, resolve){
+        var width = detec.imgElement.width;
+        var height = detec.imgElement.height;
+        const can1 = (<canvas id="layer" width={width} height={height}></canvas>);
+        const can2 = (<canvas id="rawData" width={width} height={height}></canvas>);
+        detec.render(detec.makeImage(can1,can2));
         detec.canvasElement = document.querySelector("#layer");
         detec.rawCanvas = document.querySelector("#rawData");
         detec.ctx = detec.canvasElement.getContext('2d');
@@ -42,6 +49,7 @@ function boardDetector(){
         // Store the Canvas Size
         detec.ctxDimensions.width = detec.imgElement.width;
         detec.ctxDimensions.height = detec.imgElement.height;
+        this.copyImage();
         resolve();
     }
 
@@ -56,7 +64,6 @@ function boardDetector(){
     };
     
     this.findEdges = function(){
-        this.copyImage();
         this.hLines = this.getHorizontal();
         this.vLines = this.getVertical();
     };
@@ -73,7 +80,7 @@ function boardDetector(){
         this.intersectionPoints.forEach(
             (p, i) => {
                 if(i+11 < this.intersectionPoints.length && (i-9)%10 != 0){
-                    const sq = new Square(this.rawctx,this.canvasElement, p, this.intersectionPoints[i+11]);
+                    const sq = new Square(this.ctx,this.rawctx,this.canvasElement, p, this.intersectionPoints[i+11]);
                     this.squares.push(sq);
                 }
             });
@@ -85,7 +92,7 @@ function boardDetector(){
             }
             setTimeout(function () {
                 s.getLetter();
-            }, i * 100);
+            }, i * 200);
         })
     }
     
@@ -215,22 +222,25 @@ function boardDetector(){
     }
 
     this.rendreLines = function(lines, dir){
-        lines.forEach(line => {
-            this.renderLine(line,dir)
+        lines.forEach((line, i) => {
+            this.renderLine(line, dir, i)
         });
     }
 
-    this.renderLine = function(line, dir){
+    this.renderLine = function(line, dir, i){
+        const boxLines = [3, 6];
+        const colour = boxLines.includes(i) ? 'purple' : dir == 'y' ? 'cyan' : 'teal';
+        const r = boxLines.includes(i) ? 1.5 : 0.7;
         var x,y;
         switch(dir){
             case 'y':
                 for(x=0;x<this.pixelData.width;x++){
-                    this.plotPoint(x, line, 'blue', this.rawctx)
+                    this.plotPoint(x, line, colour, this.rawctx, r)
                 }
                 break;
             case 'x':
                 for(y=0;y<this.pixelData.width;y++){
-                    this.plotPoint(line, y, 'cyan', this.rawctx)
+                    this.plotPoint(line, y, colour, this.rawctx, r)
                 }
                 break;
         }
@@ -248,99 +258,64 @@ function boardDetector(){
         this.plotPoint(x,y,'red',this.rawctx, 2)
         this.intersectionPoints.push(new intersection(x, y));
     }
-}
 
-function intersection(x, y){
-    this.x = x;
-    this.y = y;
-}
-
-function Square(ctx, canvas, topLeft, bottomRight){
-    this.ctx = ctx
-    this.topLeft =     this.bottomRight = new intersection(topLeft.x + 2, topLeft.y + 2);;
-    this.topLeft.x = this.topLeft.x + 2;
-    this.topLeft.y = this.topLeft.y;
-    this.bottomRight = new intersection(bottomRight.x - 2, bottomRight.y - 4);
-    this.canvas = canvas;
-
-    this.draw = function(colour='yellow'){
-        this.ctx.fillStyle = colour;
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.topLeft.x, this.topLeft.y);
-        this.ctx.lineTo(this.topLeft.x, this.bottomRight.y);
-        this.ctx.lineTo(this.bottomRight.x, this.bottomRight.y);
-        this.ctx.lineTo(this.bottomRight.x, this.topLeft.y);
-        this.ctx.lineTo(this.topLeft.x, this.topLeft.y);
-        this.ctx.closePath();
-        this.ctx.fill();
-    };
-
-    this.callback = function(dataURL) {
-        document.body.style.backgroundImage = 'url(' + dataURL + ')';
-        Tesseract.recognize(
-            dataURL,
-            'eng',
-            { logger: m => console.log(m) }
-        ).then(({ data: { text } }) => {
-            if(text){
-                this.draw('orange');
-                this.number = text
-                console.log(`The number you are looking at is a ${text} in square ${this.toString()}`);
-            }else{
-                console.log(`Nothing found in square ${this.toString()}`);
-            }
-        })
-    };
-
-    this.getLetter = function() {
-        // create an in-memory canvas
-        const offsetX = this.topLeft.x
-        const offsetY = this.topLeft.y
-        const width = this.bottomRight.x - this.topLeft.x
-        const height = this.bottomRight.y - this.topLeft.y
-        var buffer = document.createElement('canvas');
-        var b_ctx = buffer.getContext('2d');
-        // set its width/height to the required ones
-        buffer.width = width;
-        buffer.height = height;
-        // draw the main canvas on our buffer one
-        // drawImage(source, source_X, source_Y, source_Width, source_Height, 
-        //  dest_X, dest_Y, dest_Width, dest_Height)
-        b_ctx.drawImage(this.canvas, offsetX, offsetY, width, height,
-                        0, 0, buffer.width, buffer.height);
-        // now call the callback with the dataURL of our buffer canvas
-        this.callback(buffer.toDataURL());
-    };
-
-    this.toString = function(){
-        return `sqaure - ${this.topLeft.x} : ${this.bottomRight.x} has letter -> ${this.number}`
+    this.squaresInitilized = function(){
+        return this.squares.filter(s => !s.intialised) == 0;
     }
 }
-
-var board = [
-    ["","","","","","","","",""],
-    ["","","","","","","","",""],
-    ["","","","","","","","",""],
-    ["","","","","","","","",""],
-    ["","","","","","","","",""],
-    ["","","","","","","","",""],
-    ["","","","","","","","",""],
-    ["","","","","","","","",""],
-    ["","","","","","","","",""]
+var cols = []
+var rows = [
+    ["5","6"," ","8","4","7"," "," "," "],
+    ["6","8","7"," ","3","9"," ","6"," "],
+    [" ","7"," ","9"," "," ","8"," "," "],
+    ["8"," ","9","6"," "," "," ","8"," "],
+    ["4","3"," "," "," "," ","4","6","8"],
+    ["7","9"," "," "," "," ","2"," "," "],
+    [" "," ","8"," ","4","2"," "," "," "],
+    [" ","6"," ","8","6"," "," "," ","7"],
+    [" "," "," "," ","8"," "," ","7","9"]
 ]
 var boardDetector = new boardDetector();
+
+const waitForSquares = function(){
+    console.log(`Waiting for sqaures to be done!`);
+    setTimeout(boardDetector.squaresInitilized() ? populateBoard : waitForSquares, 1000);
+}
+
+const populateBoard = function(){
+    const squares = boardDetector.squares.map(s => s.number);
+
+    while(squares.length) {
+        cols.push(squares.splice(0,9))
+    }
+
+    cols.forEach((c, i) => {
+        c.forEach((e, j) => {
+            rows[j][i] = cols[i][j];
+        });
+    });
+
+    const rowCopy = JSON.parse(JSON.stringify(rows));
+    const bSquares = []
+    while(rowCopy.length) {
+        const bSquare = []
+        const group = rowCopy.splice(0,3)
+        group.forEach((g, i) => {
+            bSquare.push(g.splice(0,3))
+        });
+        bSquares.push(bSquare)
+    }
+
+    console.log(JSON.stringify(cols, true));
+    console.log(JSON.stringify(rows));
+    console.log(JSON.stringify(bSquares));
+}
+
+
 boardDetector.init().then(() => {
     boardDetector.findEdges();
     boardDetector.findIntersects();
     console.log(boardDetector.intersectionPoints);
     boardDetector.findSquares();
-    
-    setTimeout(function () {
-        board.forEach((r, i) => {
-            r.forEach((l, j) => {
-                board[j][i] = boardDetector.squares[((i+1) * (j+1)) - 1].number;
-                console.log(boardDetector.squares[i * j].toString());
-            });
-        });
-    },60000);
+    waitForSquares();
 });
