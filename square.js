@@ -1,4 +1,5 @@
-function Square(orgctx, ctx, canvas, topLeft, bottomRight){
+function Square(id, orgctx, ctx, canvas, topLeft, bottomRight){
+    this.id = id;
     this.ctx = ctx
     this.orgctx = orgctx;
     this.topLeft =     this.bottomRight = new intersection(topLeft.x + 2, topLeft.y + 2);;
@@ -74,7 +75,7 @@ function Square(orgctx, ctx, canvas, topLeft, bottomRight){
     }
 
     this.toString = function(){
-        return `sqaure - ${this.topLeft.x} : ${this.bottomRight.x} has letter -> ${this.number}`
+        return `|${this.number}|`
     }
 
     this.isEmpty = function(){
