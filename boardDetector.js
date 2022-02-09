@@ -272,6 +272,7 @@ class GameBoard {
         this.cols = [];
         this.rows = [[], [], [], [], [], [], [], [], []];
         this.squares = [];
+        this.numbers = ['1','2','3','4','5','6','7','8','9']
     }
 
     populateBoard(cells) {
@@ -309,11 +310,24 @@ class GameBoard {
 
     solve(){
         this.cells.forEach( (cell) => {
-            const row = this.getRow(cell);
-            const col = this.getCol(cell);
-            const sq = this.getSquare(cell);
-            console.log(sq);
+            if(!cell.number){
+                const row = this.getRow(cell);
+                const col = this.getCol(cell);
+                const sq = this.getSquare(cell);
+                var pos = this.numbers.filter( n =>
+                    !(this.inList(row, n) || this.inList(col, n) || this.inList(sq, n))
+                );
+                if(pos.length == 1){
+                    cell.number = pos[0];
+                    cell.drawLetter();
+                }
+                console.log(pos);
+            }
         })
+    }
+
+    inList(list, number){
+        return list.filter(c => c.number === number).length != 0
     }
 
     getRow(cell){
@@ -339,6 +353,10 @@ const waitForSquares = function(){
 
 const solveGame = function(){
     gameBoard.populateBoard(boardDetector.squares)
+    gameBoard.solve();
+    gameBoard.solve();
+    gameBoard.solve();
+    gameBoard.solve();
     gameBoard.solve();
 }
 
