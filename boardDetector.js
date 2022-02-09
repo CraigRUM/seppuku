@@ -61,7 +61,7 @@ class BoardDetector {
 
     makeImage(can1 = '', can2 = '') {
         return (<div className="wrapper">
-            <img src="puzzle.png" alt="Dice" id="image" />{can1}{can2}
+            <img src="puzzle3.png" alt="Dice" id="image" />{can1}{can2}
         </div>);
     }
 
@@ -273,6 +273,7 @@ class GameBoard {
         this.rows = [[], [], [], [], [], [], [], [], []];
         this.squares = [];
         this.numbers = ['1','2','3','4','5','6','7','8','9']
+        this.solvefailed = false;
     }
 
     populateBoard(cells) {
@@ -309,6 +310,7 @@ class GameBoard {
     }
 
     solve(){
+        var entered = false;
         this.cells.forEach( (cell) => {
             if(!cell.number){
                 const row = this.getRow(cell);
@@ -317,13 +319,21 @@ class GameBoard {
                 var pos = this.numbers.filter( n =>
                     !(this.inList(row, n) || this.inList(col, n) || this.inList(sq, n))
                 );
-                if(pos.length == 1){
+                if(pos.length == 1 || (this.solvefailed && pos.length == 2)){
                     cell.number = pos[0];
+                    cell.draw('lime');
                     cell.drawLetter();
+                    this.solvefailed = false;
+                    entered = true;
                 }
                 console.log(pos);
             }
         })
+        this.solvefailed = !entered;
+    }
+
+    solved(){
+        return this.cells.filter(c => !c.number).length === 0
     }
 
     inList(list, number){
@@ -351,14 +361,18 @@ const waitForSquares = function(){
     setTimeout(boardDetector.squaresInitilized() ? solveGame : waitForSquares, 1000);
 }
 
+const solvecb = function(){
+    gameBoard.solve();
+    console.log(`HMMMMMM`);
+    setTimeout(gameBoard.solved() ? () => {console.log('we did it')} : solvecb, 2000);
+}
+
 const solveGame = function(){
     gameBoard.populateBoard(boardDetector.squares)
-    gameBoard.solve();
-    gameBoard.solve();
-    gameBoard.solve();
-    gameBoard.solve();
-    gameBoard.solve();
+    solvecb();
 }
+
+
 
 boardDetector.init().then(() => {
     boardDetector.findEdges();
