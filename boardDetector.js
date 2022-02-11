@@ -61,7 +61,9 @@ class BoardDetector {
 
     makeImage(can1 = '', can2 = '') {
         return (<div className="wrapper">
-            <img src="puzzle3.png" alt="Dice" id="image" />{can1}{can2}
+            <div className="content">
+                <img src="puzzle5.png" alt="Dice" id="image" />{can1}{can2}
+            </div>
         </div>);
     }
 
@@ -131,11 +133,11 @@ class BoardDetector {
                 //Compare it all.
                 // (Currently, just the left pixel)
                 if (pixel > bottom + this.threshold) {
-                    this.plotPoint(x, y, colour, this.ctx);
+                    //this.plotPoint(x, y, colour, this.ctx);
                     gap = 0;
                 }
                 else if (pixel < bottom - this.threshold) {
-                    this.plotPoint(x, y, colour, this.ctx);
+                    //this.plotPoint(x, y, colour, this.ctx);
                     gap = 0;
                 } else if (gap < this.maxGap) {
                     gap++;
@@ -179,11 +181,11 @@ class BoardDetector {
                 //Compare it all.
                 // (Currently, just the left pixel)
                 if (pixel > left + this.threshold) {
-                    this.plotPoint(x, y, colour, this.ctx);
+                    //this.plotPoint(x, y, colour, this.ctx);
                     gap = 0;
                 }
                 else if (pixel < left - this.threshold) {
-                    this.plotPoint(x, y, colour, this.ctx);
+                    //this.plotPoint(x, y, colour, this.ctx);
                     gap = 0;
                 } if (gap < this.maxGap) {
                     gap++;
@@ -267,91 +269,7 @@ class BoardDetector {
     
 }
 
-class GameBoard {
-    constructor() {
-        this.cols = [];
-        this.rows = [[], [], [], [], [], [], [], [], []];
-        this.squares = [];
-        this.numbers = ['1','2','3','4','5','6','7','8','9']
-        this.solvefailed = false;
-    }
 
-    populateBoard(cells) {
-        this.cells = cells;
-        for (var i = 0; i < 9; i++) {
-            const start = i * 9;
-            const end = start + 9;
-            this.cols.push(this.cells.slice(start, end));
-        }
-
-        this.cols.forEach((c, i) => {
-            c.forEach((e, j) => {
-                this.rows[j][i] = this.cols[i][j];
-            });
-        });
-
-        for (var i = 0; i < 3; i++) {
-            const group = this.rows.slice(i * 3, (i * 3) + 3);
-            for (var j = 0; j < 3; j++) {
-                const start = j * 3;
-                const end = start + 3;
-                const bSquare = [];
-                bSquare.push(...group[0].slice(start, end));
-                bSquare.push(...group[1].slice(start, end));
-                bSquare.push(...group[2].slice(start, end));
-                this.squares.push(bSquare);
-            }
-        }
-
-
-        console.log(this.cols);
-        console.log(this.rows);
-        console.log(this.squares);
-    }
-
-    solve(){
-        var entered = false;
-        this.cells.forEach( (cell) => {
-            if(!cell.number){
-                const row = this.getRow(cell);
-                const col = this.getCol(cell);
-                const sq = this.getSquare(cell);
-                var pos = this.numbers.filter( n =>
-                    !(this.inList(row, n) || this.inList(col, n) || this.inList(sq, n))
-                );
-                if(pos.length == 1 || (this.solvefailed && pos.length == 2)){
-                    cell.number = pos[0];
-                    cell.draw('lime');
-                    cell.drawLetter();
-                    this.solvefailed = false;
-                    entered = true;
-                }
-                console.log(pos);
-            }
-        })
-        this.solvefailed = !entered;
-    }
-
-    solved(){
-        return this.cells.filter(c => !c.number).length === 0
-    }
-
-    inList(list, number){
-        return list.filter(c => c.number === number).length != 0
-    }
-
-    getRow(cell){
-        return this.rows.filter(i => i.filter(c => c.id === cell.id).length == 1)[0];
-    }
-
-    getCol(cell){
-        return this.cols.filter(i => i.filter(c => c.id === cell.id).length == 1)[0];
-    }
-
-    getSquare(cell){
-        return this.squares.filter(i => i.filter(c => c.id === cell.id).length == 1)[0];
-    }
-}
 
 var boardDetector = new BoardDetector();
 var gameBoard = new GameBoard();
@@ -364,7 +282,14 @@ const waitForSquares = function(){
 const solvecb = function(){
     gameBoard.solve();
     console.log(`HMMMMMM`);
-    setTimeout(gameBoard.solved() ? () => {console.log('we did it')} : solvecb, 2000);
+    setTimeout(gameBoard.solved() ? () => {solved()} : solvecb, 50);
+}
+
+const solved = function(){
+    console.log('we did it')
+    gameBoard.cells.forEach(c => {
+        gameBoard.fillCell(c, c.number);
+    });
 }
 
 const solveGame = function(){
