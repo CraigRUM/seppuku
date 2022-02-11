@@ -47,28 +47,23 @@ class GameBoard {
         var entered = false;
         this.updatePossible();
         this.filterPossible();
-        for(var i = 0; i < 5; i++){
-            const options = this.cells.filter(c => c.pos && c.pos.length == i && !c.number);
-            if(options.length){
-                const cell = options[this.getRandomInt(options.length)];
-                switch(i) {
-                    case 0:
-                        this.failed();
-                        return;
-                    case 1:
-                        this.fillCell(cell, cell.pos[this.getRandomInt(cell.pos.length)]);
-                        entered = true;
-                        this.solvefailed = !entered;
-                        return;
-                    default:
-                        if(this.solvefailed){
-                            this.fillCell(cell, cell.pos[this.getRandomInt(cell.pos.length)]);
-                            entered = true;
-                            this.solvefailed = !entered;
-                            return;
-                        }
-                }
-            }
+        const options = this.cells.filter(c => !c.number);
+
+        if(options.filter(c => c.pos.length == 0).length > 0){
+            this.failed();
+            return;
+        }
+        options.filter(c => c.pos.length == 1).forEach((cell) => {
+            this.fillCell(cell, cell.pos[this.getRandomInt(cell.pos.length)]);
+            entered = true;
+            this.solvefailed = !entered;
+        });
+        if(this.solvefailed){
+            const cell = options.filter(c => c.pos.length > 1 && c.pos.length < 4)[0];
+            this.fillCell(cell, cell.pos[this.getRandomInt(cell.pos.length)]);
+            entered = true;
+            this.solvefailed = !entered;
+            return;
         }
         this.solvefailed = !entered;
     }

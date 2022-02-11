@@ -62,7 +62,7 @@ class BoardDetector {
     makeImage(can1 = '', can2 = '') {
         return (<div className="wrapper">
             <div className="content">
-                <img src="puzzle5.png" alt="Dice" id="image" />{can1}{can2}
+                <img src="puzzle3.png" alt="Dice" id="image" />{can1}{can2}
             </div>
         </div>);
     }
@@ -296,8 +296,6 @@ const solveGame = function(){
     gameBoard.populateBoard(boardDetector.squares)
     solvecb();
 }
-
-
 
 boardDetector.init().then(() => {
     boardDetector.findEdges();
