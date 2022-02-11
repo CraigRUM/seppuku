@@ -24,7 +24,8 @@ class Square{
     }
 
     getPos(){
-        this.pos = this.numbers.filter( n => !(this.inList(this.row, n) || this.inList(this.col, n) || this.inList(this.sq, n)));
+        const listToFilter = this.pos && this.pos.length > 0 ? this.pos : this.numbers;
+        this.pos = listToFilter.filter( n => !(this.inList(this.row, n) || this.inList(this.col, n) || this.inList(this.sq, n)));
     }
 
     filterPos(){
@@ -72,6 +73,7 @@ class Square{
         this.number = ''
         this.intialised = true;
         this.provisonal = true;
+        this.pos = [];
     }
 
     callback(dataURL) {

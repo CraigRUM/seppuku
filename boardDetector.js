@@ -62,7 +62,7 @@ class BoardDetector {
     makeImage(can1 = '', can2 = '') {
         return (<div className="wrapper">
             <div className="content">
-                <img src="puzzle7.png" alt="Dice" id="image" />{can1}{can2}
+                <img src="puzzle8.png" alt="Dice" id="image" />{can1}{can2}
             </div>
         </div>);
     }
@@ -96,7 +96,7 @@ class BoardDetector {
             }
             setTimeout(function () {
                 s.getLetter();
-            }, i * 200);
+            }, i * 50);
         });
     }
 
