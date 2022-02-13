@@ -1,13 +1,13 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import Decector from './Decector';
+import Camera from './Camera';
 
-describe('<Decector />', () => {
+describe('<Camera />', () => {
   test('it should mount', () => {
-    render(<Decector canvas={null}/>);
+    render(<Camera ctxReady={() => {}}/>);
     
-    const decector = screen.getByTestId('Decector');
+    const decector = screen.getByTestId('Camera');
 
     expect(decector).toBeInTheDocument();
   });
