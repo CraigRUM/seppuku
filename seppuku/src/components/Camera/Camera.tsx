@@ -44,10 +44,11 @@ const Camera: FC<CameraProps> = ({ctxReady}) => {
     }
   }, [loadedImage]);
 
-  const reset = useCallback(() => {
+  const reset = useCallback((callback) => {
     setImageSrc(null);
     setLoadedImage(null);
     setImageElement('');
+    ctxReady(null);
   },[]);
 
   const uiButton = imageSrc ? 
