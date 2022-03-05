@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/react-gh-pages/static/css/main.12f5ba98.chunk.css",
-    "main.js": "/react-gh-pages/static/js/main.a54e6751.chunk.js",
-    "main.js.map": "/react-gh-pages/static/js/main.a54e6751.chunk.js.map",
-    "runtime~main.js": "/react-gh-pages/static/js/runtime~main.b06caae1.js",
-    "runtime~main.js.map": "/react-gh-pages/static/js/runtime~main.b06caae1.js.map",
-    "static/js/2.138ad11c.chunk.js": "/react-gh-pages/static/js/2.138ad11c.chunk.js",
-    "static/js/2.138ad11c.chunk.js.map": "/react-gh-pages/static/js/2.138ad11c.chunk.js.map",
-    "static/js/3.1ef263b0.chunk.js": "/react-gh-pages/static/js/3.1ef263b0.chunk.js",
-    "static/js/3.1ef263b0.chunk.js.map": "/react-gh-pages/static/js/3.1ef263b0.chunk.js.map",
-    "index.html": "/react-gh-pages/index.html",
-    "precache-manifest.a33b24df0223d56cda5a90e41130664d.js": "/react-gh-pages/precache-manifest.a33b24df0223d56cda5a90e41130664d.js",
-    "service-worker.js": "/react-gh-pages/service-worker.js",
-    "static/css/main.12f5ba98.chunk.css.map": "/react-gh-pages/static/css/main.12f5ba98.chunk.css.map",
-    "static/media/bin.svg": "/react-gh-pages/static/media/bin.3fd11e65.svg",
-    "static/media/camera.svg": "/react-gh-pages/static/media/camera.c4363820.svg",
-    "static/media/logo.svg": "/react-gh-pages/static/media/logo.06e73328.svg"
+    "main.css": "/CraigRUM/seppuku/static/css/main.12f5ba98.chunk.css",
+    "main.js": "/CraigRUM/seppuku/static/js/main.a54e6751.chunk.js",
+    "main.js.map": "/CraigRUM/seppuku/static/js/main.a54e6751.chunk.js.map",
+    "runtime~main.js": "/CraigRUM/seppuku/static/js/runtime~main.373f9fba.js",
+    "runtime~main.js.map": "/CraigRUM/seppuku/static/js/runtime~main.373f9fba.js.map",
+    "static/js/2.b7de2e0b.chunk.js": "/CraigRUM/seppuku/static/js/2.b7de2e0b.chunk.js",
+    "static/js/2.b7de2e0b.chunk.js.map": "/CraigRUM/seppuku/static/js/2.b7de2e0b.chunk.js.map",
+    "static/js/3.1ef263b0.chunk.js": "/CraigRUM/seppuku/static/js/3.1ef263b0.chunk.js",
+    "static/js/3.1ef263b0.chunk.js.map": "/CraigRUM/seppuku/static/js/3.1ef263b0.chunk.js.map",
+    "index.html": "/CraigRUM/seppuku/index.html",
+    "precache-manifest.1c95ad735e874c65824e7efd70044c73.js": "/CraigRUM/seppuku/precache-manifest.1c95ad735e874c65824e7efd70044c73.js",
+    "service-worker.js": "/CraigRUM/seppuku/service-worker.js",
+    "static/css/main.12f5ba98.chunk.css.map": "/CraigRUM/seppuku/static/css/main.12f5ba98.chunk.css.map",
+    "static/media/bin.svg": "/CraigRUM/seppuku/static/media/bin.3fd11e65.svg",
+    "static/media/camera.svg": "/CraigRUM/seppuku/static/media/camera.c4363820.svg",
+    "static/media/logo.svg": "/CraigRUM/seppuku/static/media/logo.06e73328.svg"
   }
 }
