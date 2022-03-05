@@ -6,6 +6,7 @@ import HoughTransform from '../../model/HoughTransform';
 import Image from 'image-js';
 import Intersection from '../../model/Intersection';
 import Square from '../../model/Square';
+import GameBoard from '../../model/GameBoard';
 
 interface DecectorProps {canvas: any}
 
@@ -18,7 +19,7 @@ const Decector: FC<DecectorProps> = ({canvas}) => {
 
   const maxGap = 20;
   const lineThreshold = 20;
-  const globalThreshold = 80;
+  const globalThreshold = 100;
   const xColour = "red";
   const yColour = "green";
   const imageWidth = 640;
@@ -27,6 +28,7 @@ const Decector: FC<DecectorProps> = ({canvas}) => {
   const orgImageRef = createRef() as any;
   const intersectionPoints: Intersection[] = [];
   const squares: Square[] = [];
+  const gameBoard = new GameBoard();
 
   const minLineLength = 120;
 
@@ -74,6 +76,8 @@ const Decector: FC<DecectorProps> = ({canvas}) => {
     const houghTransform = new HoughTransform(canvas);
     const pixelData:ImageData = ctx.getImageData(0, 0, imageWidth, imageHeight);
     ctx.drawImage(orgImageRef.current, 0, 0);
+    upContrast(95);
+    threshold();
     points.forEach((point: Point) => {
       const inX = point.x > 170 && point.x < (170+300);
       const inY = point.y > 90 && point.y < (90+300);
@@ -91,10 +95,11 @@ const Decector: FC<DecectorProps> = ({canvas}) => {
     });
     console.log(intersectionPoints);
     findSquares();
+    waitForSquares();
   }
 
   const findSquares = () => {
-    intersectionPoints.forEach(
+    intersectionPoints.reverse().forEach(
         (p, i) => {
             if (i + 11 < intersectionPoints.length && (i - 9) % 10 != 0) {
                 const sq = new Square(i, ctx, canvas, p, intersectionPoints[i + 11]);
@@ -102,14 +107,9 @@ const Decector: FC<DecectorProps> = ({canvas}) => {
             }
         });
     squares.forEach((s, i) => {
-        if (i % 2 == 0) {
-            s.draw();
-        } else {
-            s.draw('green');
-        }
         setTimeout(function () {
             s.getLetter();
-        }, i * 50);
+        }, i * 10);
     });
 }
 
@@ -121,43 +121,17 @@ const Decector: FC<DecectorProps> = ({canvas}) => {
     ctx.putImageData(imageData, 0, 0);
   };
 
-  // const drawLine = (x1:number, y1:number, x2:number, y2:number, width: number, height: number) => {
-  //   ctx.beginPath();
-  //   ctx.strokeStyle='rgba(255,0,0,1)';
-  //   ctx.moveTo(x1+width/2,y1+height/2);
-  //   ctx.lineTo(x2+width/2,y2+height/2);
-  //   ctx.stroke();
-  //   ctx.strokeStyle='rgba(0,0,0,1)';
-  //   ctx.closePath();
-  // }
-  // const renderLine = (pixelData: ImageData, start: Point, end: Point) => {
-  //   // const boxLines = [3, 6];
-  //   // const colour = boxLines.includes(i) ? 'purple' : dir == 'y' ? 'cyan' : 'teal';
-  //   // const r = boxLines.includes(i) ? 3 : 3;
-  //   // console.log(line);
-  //   // var x, y;
-  //   // switch (dir) {
-  //   //     case 'y':
-  //   //         for (x = line.sx; x < line.ex; x++) {
-  //   //             plotPoint(x, line.y, colour, r);
-  //   //         }
-  //   //         break;
-  //   //     case 'x':
-  //   //         for (y = line.sy; y < line.ey; y++) {
-  //   //             plotPoint(line.x, y, colour, r);
-  //   //         }
-  //   //         break;
-  //   // }
-  // }
-  // const threshold = () => {
-  //     const pixelData: ImageData = ctx.getImageData(0, 0, imageWidth, imageHeight);
-  //     points.forEach( (point: Point) => {
-  //       if(point.getColourMagnitued(pixelData.data) / 3 < globalThreshold) {
-  //         point.plot(pixelData.data, "#000000");
-  //       }
-  //     });
-  //     putImageData(pixelData);
-  // }
+  const threshold = () => {
+      const pixelData: ImageData = ctx.getImageData(0, 0, imageWidth, imageHeight);
+      points.forEach( (point: Point) => {
+        if(point.getColourMagnitued(pixelData.data) / 3 < globalThreshold) {
+          point.plot(pixelData.data, "#000000");
+        }else{
+          point.plot(pixelData.data, "#FFFFFF");
+        }
+      });
+      putImageData(pixelData);
+  }
 
   const boxImage = () => {
     const pixelData: ImageData = ctx.getImageData(0, 0, imageWidth, imageHeight);
@@ -169,6 +143,45 @@ const Decector: FC<DecectorProps> = ({canvas}) => {
       }
     });
     putImageData(pixelData);
+  }
+
+  const upContrast = (contrast: any) => {
+    const pixelData: ImageData = ctx.getImageData(0, 0, imageWidth, imageHeight);
+    contrast = (contrast/100) + 1;  //convert to decimal & shift range: [0..2]
+    var intercept = 128 * (1 - contrast);
+    for(var i=0;i<pixelData.data.length;i+=4){   //r,g,b,a
+      pixelData.data[i] = pixelData.data[i]*contrast + intercept;
+      pixelData.data[i+1] = pixelData.data[i+1]*contrast + intercept;
+      pixelData.data[i+2] = pixelData.data[i+2]*contrast + intercept;
+    }
+    putImageData(pixelData);
+  }
+
+  const squaresInitilized = () => {
+    return squares.filter(s => !s.intialised).length == 0;
+  }
+
+const waitForSquares = function(){
+    console.log(`Waiting for sqaures to be done!`);
+    setTimeout(squaresInitilized() ? solveGame : waitForSquares, 1000);
+}
+
+const solvecb = function(){
+    gameBoard.solve();
+    console.log(`HMMMMMM`);
+    setTimeout(gameBoard.solved() ? () => {solved()} : solvecb, 10);
+}
+
+const solved = function(){
+    console.log('we did it')
+    gameBoard.cells.forEach((c: Square) => {
+        gameBoard.fillCell(c, c.number);
+    });
+}
+
+const solveGame = function(){
+    gameBoard.populateBoard(squares)
+    solvecb();
 }
 
   if(!threshholdDone){

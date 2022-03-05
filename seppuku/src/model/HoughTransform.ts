@@ -11,7 +11,7 @@ class HoughTransform{
     drawingHeight: number;
     cosTable = new Array(this.numAngleCells);
     sinTable = new Array(this.numAngleCells);
-    distance = 8;
+    distance = 10;
 
 
 
@@ -32,7 +32,7 @@ class HoughTransform{
             for (var j=0;j<this.accum[i].length;j++) {
                 if (this.accum[i][j]>max) {}
                     var max = this.accum[i][j];
-                    if (max>170) {
+                    if (max>160) {
                         var a=this.cosTable[i];
                         var b=this.sinTable[i];
                         var bestRho = j;

@@ -14,6 +14,11 @@ class Square{
     numbers: any;
     provisonal: boolean;
     number: string = '';
+    pos: any;
+    sq: any;
+    row: any;
+    col: any;
+    filteredPos: any;
 
     constructor(id :any, ctx:any, canvas:any, topLeft:any, bottomRight:any){
         this.id = id;
@@ -26,8 +31,8 @@ class Square{
         this.height = this.bottomRight.y - this.topLeft.y;
         this.numbers = ['1','2','3','4','5','6','7','8','9'];
 
-        const heightMod = this.percent(this.height, 10);
-        const widthMod = this.percent(this.width, 10);
+        const heightMod = this.percent(this.height, 15);
+        const widthMod = this.percent(this.width, 15);
         this.bottomRight.y = this.bottomRight.y - heightMod;
         this.bottomRight.x = this.bottomRight.x - widthMod;
         this.topLeft.y = this.topLeft.y + heightMod;
@@ -37,34 +42,34 @@ class Square{
         this.provisonal = false;
     }
 
-    // getPos(){
-    //     const listToFilter = this.pos && this.pos.length > 0 ? this.pos : this.numbers;
-    //     this.pos = listToFilter.filter( n => !(this.inList(this.row, n) || this.inList(this.col, n) || this.inList(this.sq, n)));
-    // }
+    getPos(){
+        const listToFilter = this.pos && this.pos.length > 0 ? this.pos : this.numbers;
+        this.pos = listToFilter.filter( (n: any) => !(this.inList(this.row, n) || this.inList(this.col, n) || this.inList(this.sq, n)));
+    }
 
-    // filterPos(){
-    //     this.tryFilter(this.sq);
-    //     this.tryFilter(this.row);
-    //     this.tryFilter(this.col);
-    // }
+    filterPos(){
+        this.tryFilter(this.sq);
+        this.tryFilter(this.row);
+        this.tryFilter(this.col);
+    }
 
-    // tryFilter(list){
-    //     const others = [];
-    //     //this.row.filter(c => !c.number && c.id != this.id).forEach(c => others.push(...c.pos));
-    //     //this.col.filter(c => !c.number && c.id != this.id).forEach(c => others.push(...c.pos));
-    //     list.filter(c => !c.number && c.id != this.id).forEach(c => others.push(...c.pos));
-    //     this.filteredPos = this.pos.filter( n => !others.includes(n));
-    //     if(this.filteredPos.length > 0 && this.filteredPos.length < this.pos.length){
-    //         this.pos = this.filteredPos;
-    //         console.log(others);
-    //         console.log(this.pos);
-    //         console.log(this.filteredPos);
-    //     }
-    // }
+    tryFilter(list:any){
+        const others:any = [];
+        this.row.filter((c:Square) => !c.number && c.id != this.id).forEach((c:Square) => others.push(...c.pos));
+        this.col.filter((c:Square) => !c.number && c.id != this.id).forEach((c:Square) => others.push(...c.pos));
+        list.filter((c:Square) => !c.number && c.id != this.id).forEach((c:Square) => others.push(...c.pos));
+        this.filteredPos = this.pos.filter((n:any) => !others.includes(n));
+        if(this.filteredPos.length > 0 && this.filteredPos.length < this.pos.length){
+            this.pos = this.filteredPos;
+            console.log(others);
+            console.log(this.pos);
+            console.log(this.filteredPos);
+        }
+    }
 
-    // inList(list, number){
-    //     return list.filter(c => c.number === number).length != 0
-    // }
+    inList(list:any, number:string){
+        return list.filter((c:Square) => c.number === number).length != 0
+    }
 
     percent(val: any, percent: any){
         return (val / 100) * percent;
@@ -85,9 +90,9 @@ class Square{
     blank(){
         this.draw('white');
         this.number = '';
+        this.pos = [];
         this.intialised = true;
         this.provisonal = true;
-        //this.pos = [];
     }
 
     callback(dataURL: string) {
@@ -100,9 +105,10 @@ class Square{
             dataURL,'eng'
         ).progress(console.log).then((res: any) => {
             console.log(res.text);
-            if(res.text){
-                this.draw('orange');
-                this.number = res.text.replace('\n', '');
+            const number = res.text ? res.text.replace(/[^0-9]/g,"").substring(0, 1) : "";
+            if(number){
+                //this.draw('orange');
+                this.number = number;
                 this.drawLetter();
                 this.intialised = true;
                 this.provisonal = false;
@@ -141,28 +147,31 @@ class Square{
     drawLetter() {
         this.ctx.fillStyle = "black";
         this.ctx.font = '25px Courier New';
-        this.ctx.fillText(this.number, this.bottomRight.x - this.width/1.2, this.bottomRight.y - this.height / 6);
+        this.ctx.fillText(this.number, this.topLeft.x, this.bottomRight.y);
     }
 
-    // toString(){
-    //     return `|${this.number}|`
-    // }
+    toString(){
+        return `|${this.number}|`
+    }
 
     isEmpty(){
-        return false;
         const imageData = this.ctx.getImageData(this.topLeft.x, this.topLeft.y, this.width, this.height); //take away the .data
 
         var r, g, b;
+        var count = 0;
+        var blackCount = 0; 
         for(var i = 0; i+3 < imageData.data.length; i+=4) {
             r = imageData.data[i];
             g = imageData.data[i+1];
             b = imageData.data[i+2];
 
-            if(!(r > 0 && g > 0 && b > 0)) { // if pixel is not black, and not transparent          
-                return false;
+            if(r + b + g < 255) { // if pixel is not black, and not transparent          
+                blackCount++;
             }
+            count++;
         }
-        return true;
+        const percent = (blackCount / (count / 100));
+        return !(percent > 15);
     }
 }
 export default Square;
