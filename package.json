@@ -50,6 +50,7 @@
     "os": false
   },
   "devDependencies": {
+    "gh-pages": "^3.2.3",
     "react-app-rewired": "^2.1.11"
   }
 }
