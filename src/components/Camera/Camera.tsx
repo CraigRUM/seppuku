@@ -57,7 +57,7 @@ const Camera: FC<CameraProps> = ({ctxReady, width, height}) => {
 
   useEffect(() => {
     if(canvasRef.current){
-      const boxSize = height * 0.7;
+      const boxSize = height * 0.5;
       const xMod = (width - boxSize) / 2;
       const yMod = (height - boxSize) / 2;
       const ctx = canvasRef.current.getContext('2d');

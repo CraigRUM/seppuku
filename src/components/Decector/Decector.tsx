@@ -32,7 +32,7 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
   const intersectionPoints: Intersection[] = [];
   const squares: Square[] = [];
   const gameBoard = new GameBoard();
-  const boxSize = imageHeight * 0.7;
+  const boxSize = imageHeight * 0.5;
   const xMod = (imageWidth - boxSize) / 2;
   const yMod = (imageHeight - boxSize) / 2;
 
@@ -54,14 +54,11 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
 
   useEffect(() => {
     setTimeout(()=>{
-      //threshold();
       Image.load(canvas.toDataURL("image/png").replace("image/png", "image/octet-stream")).then((img: Image) => {
         setOrigin(img.toDataURL());
         const grey = img.grey();
         setEdges(cannyEdgeDetector(grey));
       });
-      // getYLines(pixelData);
-      //getXLines();
     }, 1);
   }, [points]);
   
