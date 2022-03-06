@@ -13,6 +13,9 @@
 }
 
 .CameraWrapper{
+    width: 800px;
+    height: 600px;
+    position: relative;
     border-radius: 10%;
     background-color: dar; /* Green */
     padding: 20px;
@@ -22,6 +25,15 @@
     border-width: 5px;
 }
 
+.camera,
+.canvas {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+.canvas {
+    z-index: 10;
+}
 
 button > img {
     height: 6vmin;

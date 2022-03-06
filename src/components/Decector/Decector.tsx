@@ -32,7 +32,7 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
   const intersectionPoints: Intersection[] = [];
   const squares: Square[] = [];
   const gameBoard = new GameBoard();
-  const boxSize = imageHeight * 0.5;
+  const boxSize = imageHeight * 0.7;
   const xMod = (imageWidth - boxSize) / 2;
   const yMod = (imageHeight - boxSize) / 2;
 

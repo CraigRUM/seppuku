@@ -3,6 +3,7 @@ import styles from './Camera.module.css';
 import Webcam from "react-webcam";
 import cameraIcon from'./camera.svg';
 import binIcon from'./bin.svg';
+import Point from '../../model/Point';
 
 interface CameraProps {ctxReady: Function, width: number, height: number}
 
@@ -18,8 +19,6 @@ const Camera: FC<CameraProps> = ({ctxReady, width, height}) => {
   const [imageElement, setImageElement] = useState<any>('');
   const [imageRef, setImageRef] = useState<any>('');
   const [loadedImage, setLoadedImage] = useState<any>('');
-  const [acctualHeight, setAcctualHeight] = useState<any>(height);
-  const [acctualWidth, setAcctualWidth] = useState<any>(width);
   const canvasRef = createRef() as any;
 
   // Web Cam setup
@@ -30,12 +29,10 @@ const Camera: FC<CameraProps> = ({ctxReady, width, height}) => {
       console.log(canvas);
       ctxReady(webcamRef.current.getCanvas().ctx);
       setImageSrc(webcamRef.current.getScreenshot());
-      setAcctualHeight(webcamRef.current.getImageHeight());
-      setAcctualWidth(webcamRef.current.getImageWidth());
     }
     },[webcamRef]
   );
-  const webcam = <Webcam ref={webcamRef} screenshotFormat="image/jpeg" videoConstraints={videoConstraints}/>;
+  const webcam = <Webcam className={styles.camera} ref={webcamRef} screenshotFormat="image/jpeg" videoConstraints={videoConstraints}/>;
 
   useEffect(() => {
     setImageElement(<img onLoad={getImageHeight} ref={onRefChange} src={imageSrc} alt="Captured Image" id="image" />);
@@ -50,13 +47,30 @@ const Camera: FC<CameraProps> = ({ctxReady, width, height}) => {
   }
 
   useEffect(() => {
-    if(canvasRef.current){
+    if(canvasRef.current && imageRef){
       const ctx = canvasRef.current.getContext('2d');
       ctx.drawImage(imageRef, 0, 0);
       setImageElement('');
       ctxReady(canvasRef.current);
     }
   }, [loadedImage]);
+
+  useEffect(() => {
+    if(canvasRef.current){
+      const boxSize = height * 0.7;
+      const xMod = (width - boxSize) / 2;
+      const yMod = (height - boxSize) / 2;
+      const ctx = canvasRef.current.getContext('2d');
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          if(!(x > xMod && x < (width - xMod) && y > yMod && y < (height - yMod))){
+            ctx.fillStyle = `rgba(${x},${y},0, 0.7)`;
+            ctx.fillRect(x, y, 1, 1);
+          }
+        }
+      }
+    }
+  }, []);
 
   const reset = useCallback((callback) => {
     setImageSrc(null);
@@ -69,12 +83,12 @@ const Camera: FC<CameraProps> = ({ctxReady, width, height}) => {
     <button className={styles.uiButton} onClick={reset}><img src={binIcon} alt="reset" /></button> : 
     <button className={styles.uiButton} onClick={capture}><img src={cameraIcon} alt="take a picture" /></button>;
 
-  const canvas = <canvas ref={canvasRef} height={height} width={width}/>;
+  const canvas = <canvas className={styles.canvas} ref={canvasRef} height={height} width={width}/>;
   
   return <>
     <div className={styles.CameraWrapper}>
       {imageSrc && imageElement}
-      {loadedImage && canvas}
+      {canvas}
       {!imageSrc && webcam}
     </div>
     {uiButton}
