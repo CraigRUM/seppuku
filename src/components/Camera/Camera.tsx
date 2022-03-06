@@ -18,12 +18,21 @@ const Camera: FC<CameraProps> = ({ctxReady, width, height}) => {
   const [imageElement, setImageElement] = useState<any>('');
   const [imageRef, setImageRef] = useState<any>('');
   const [loadedImage, setLoadedImage] = useState<any>('');
+  const [acctualHeight, setAcctualHeight] = useState<any>(height);
+  const [acctualWidth, setAcctualWidth] = useState<any>(width);
   const canvasRef = createRef() as any;
 
   // Web Cam setup
   const webcamRef = React.useRef(null) as any;
   const capture = useCallback(() => {
-    if(webcamRef.current){setImageSrc(webcamRef.current.getScreenshot()); }
+    if(webcamRef.current){
+      const canvas: HTMLCanvasElement = webcamRef.current.getCanvas(); 
+      console.log(canvas);
+      ctxReady(webcamRef.current.getCanvas().ctx);
+      setImageSrc(webcamRef.current.getScreenshot());
+      setAcctualHeight(webcamRef.current.getImageHeight());
+      setAcctualWidth(webcamRef.current.getImageWidth());
+    }
     },[webcamRef]
   );
   const webcam = <Webcam ref={webcamRef} screenshotFormat="image/jpeg" videoConstraints={videoConstraints}/>;

@@ -13,11 +13,9 @@
 }
 
 .CameraWrapper{
-    min-height: 520px;
-    min-width: 700px;
     border-radius: 10%;
     background-color: dar; /* Green */
-    padding: 50px;
+    padding: 20px;
     margin: 10px;
     border: darkcyan;
     border-style: solid;

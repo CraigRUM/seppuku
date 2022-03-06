@@ -31,15 +31,20 @@ function useWindowDimensions() {
 
 function App() {
 
-  const { height, width } = useWindowDimensions();
-  const imageWidth = width > height ? width * 0.4 : ((height * 0.4) / 4) * 3;
-  const imageHeight = width > height ? ((width * 0.4) / 4) * 3 : height * 0.4;
+  //const { height, width } = useWindowDimensions();
+  // const height = 768;
+  // const width = 1366;
+  // const portion = 0.6;
+  const imageWidth = 800;
+  const imageHeight = 600;
 
 
   const [canvas, setCanvas] = useState<any>(null);
   const cameraRef = React.createRef() as any;
   const cameraComponent = <Camera ctxReady={setCanvas} width={imageWidth} height={imageHeight}></Camera>;
   const detectorComponent = <Decector canvas={canvas} imageWidth={imageWidth} imageHeight={imageHeight} reset={setCanvas}/>;
+
+
 
   return (
     <div className="App">
