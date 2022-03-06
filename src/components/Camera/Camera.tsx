@@ -4,9 +4,14 @@ import Webcam from "react-webcam";
 import cameraIcon from'./camera.svg';
 import binIcon from'./bin.svg';
 
-interface CameraProps {ctxReady: Function}
+interface CameraProps {ctxReady: Function, width: number, height: number}
 
-const Camera: FC<CameraProps> = ({ctxReady}) => {
+const Camera: FC<CameraProps> = ({ctxReady, width, height}) => {
+  const videoConstraints = {
+    width: width,
+    height: height,
+    facingMode: "environment"
+  };
 
   // States
   const [imageSrc, setImageSrc] = useState<any>('');
@@ -21,7 +26,7 @@ const Camera: FC<CameraProps> = ({ctxReady}) => {
     if(webcamRef.current){setImageSrc(webcamRef.current.getScreenshot()); }
     },[webcamRef]
   );
-  const webcam = <Webcam ref={webcamRef} screenshotFormat="image/jpeg"/>;
+  const webcam = <Webcam ref={webcamRef} screenshotFormat="image/jpeg" videoConstraints={videoConstraints}/>;
 
   useEffect(() => {
     setImageElement(<img onLoad={getImageHeight} ref={onRefChange} src={imageSrc} alt="Captured Image" id="image" />);
@@ -55,7 +60,7 @@ const Camera: FC<CameraProps> = ({ctxReady}) => {
     <button className={styles.uiButton} onClick={reset}><img src={binIcon} alt="reset" /></button> : 
     <button className={styles.uiButton} onClick={capture}><img src={cameraIcon} alt="take a picture" /></button>;
 
-  const canvas = <canvas ref={canvasRef} height="480" width="640"/>;
+  const canvas = <canvas ref={canvasRef} height={height} width={width}/>;
   
   return <>
     <div className={styles.CameraWrapper}>

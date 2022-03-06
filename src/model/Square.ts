@@ -61,9 +61,6 @@ class Square{
         this.filteredPos = this.pos.filter((n:any) => !others.includes(n));
         if(this.filteredPos.length > 0 && this.filteredPos.length < this.pos.length){
             this.pos = this.filteredPos;
-            console.log(others);
-            console.log(this.pos);
-            console.log(this.filteredPos);
         }
     }
 

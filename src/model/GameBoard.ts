@@ -52,31 +52,33 @@ class GameBoard {
     }
 
     solve(){
-        var entered = false;
         this.updatePossible();
         this.filterPossible();
         const options = this.cells.filter((c: Square) => !c.number);
-
         if(options.filter((c: Square) => c.pos.length == 0).length > 0){
             this.failed();
             return;
         }
-        options.filter((c: Square) => c.pos.length == 1).forEach((cell: Square) => {
-            if(!entered){
-                this.fillCell(cell, cell.pos[this.getRandomInt(cell.pos.length)]);
-                entered = true;
-                this.solvefailed = !entered;
-            }
-        });
-        if(this.solvefailed){
-            const remaining = options.filter((c: Square) => c.pos.length > 1 && c.pos.length < 4);
-            const cell = options.filter((c: Square) => c.pos.length > 1 && c.pos.length < 4)[this.getRandomInt(remaining.length)];
+        const cell = this.getNextBest();
+        this.guessCell(cell);
+    }
+
+    guessCell(cell: Square){
+        if(cell && cell.pos && cell.pos.length){
             this.fillCell(cell, cell.pos[this.getRandomInt(cell.pos.length)]);
-            entered = true;
-            this.solvefailed = !entered;
-            return;
+            return true;
         }
-        this.solvefailed = !entered;
+        return false;
+    }
+
+    getNextBest(){
+        const options = this.cells.filter((c: Square) => !c.number);
+        for(let i = 1; i <= 8; i++){
+            const refinedOptions = options.filter((c: Square) => c.pos.length == i);
+            if(refinedOptions.length){
+                return refinedOptions[this.getRandomInt(refinedOptions.length)];
+            }
+        }
     }
 
     updatePossible(){
