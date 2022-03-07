@@ -13,8 +13,8 @@
 }
 
 .CameraWrapper{
-    width: 1024px;
-    height: 576px;
+    width: 640px;
+    height: 480px;
     position: relative;
     border-radius: 10%;
     background-color: dar; /* Green */
