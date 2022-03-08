@@ -4,9 +4,33 @@ import './App.css';
 import Camera from './components/Camera/Camera';
 import Decector from './components/Decector/Decector';
 
+function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height
+  };
+}
+
+function useWindowDimensions() {
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowDimensions;
+}
+
 function App() {
-  const imageWidth = 1024;
-  const imageHeight = 576;
+  const { height, width } = useWindowDimensions();
+  const imageWidth = width * 0.8;
+  const imageHeight = height * 0.8;
 
   const [canvas, setCanvas] = useState<any>(null);
 

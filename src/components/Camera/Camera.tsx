@@ -7,8 +7,6 @@ import binIcon from'./bin.svg';
 interface CameraProps {ctxReady: Function, imageWidth: number, imageHeight: number}
 
 const Camera: FC<CameraProps> = ({ctxReady, imageWidth, imageHeight}) => {
-  let width = imageWidth;
-  let height = imageHeight;
   const videoConstraints = {
     width: { max: imageWidth },
     height: { max: imageHeight },
@@ -101,9 +99,10 @@ const Camera: FC<CameraProps> = ({ctxReady, imageWidth, imageHeight}) => {
         {imageSrc && imageElement}
         {canvas}
         {!imageSrc && webcam}
+        {uiButton}
       </div>
     </div>
-    {uiButton}
+
   </>;
 };
 

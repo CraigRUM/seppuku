@@ -58,9 +58,11 @@ class HoughTransform{
             const mainY = (l.y1 - l.y2) < -this.maxTilt || (l.y2 - l.y1) < -this.maxTilt;
             return !(mainX && mainY)
         });
-        lines.forEach((line: Line, i: number) => {
-            this.drawLine(line, `rgba(0,${(255 / lines.length) * (lines.length - i)},${(255 / lines.length) * i},1)`);
-        });
+        if(false){
+            lines.forEach((line: Line, i: number) => {
+                this.drawLine(line, `rgba(0,${(255 / lines.length) * (lines.length - i)},${(255 / lines.length) * i},1)`);
+            });
+        }
         while(lines.length > 0){
             const line: Line = lines.pop() as Line;
             newLines.push(line);
@@ -79,9 +81,8 @@ class HoughTransform{
             });
         }
         console.log(newLines);
-        newLines.forEach((line: Line) => {
-            this.drawLine(line, `rgba(${(255 / lines.length) * (i)},0,${(255 / lines.length) * (lines.length - i)},1)`);
-            this.drawLine(line, 'rgba(255,0,0,1)');
+        newLines.forEach((line: Line, i: number) => {
+            this.drawLine(line, `rgba(0,150,150,1)`);
         });
         return newLines;
     }
