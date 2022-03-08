@@ -80,8 +80,8 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
     const houghTransform = new HoughTransform(canvas, (boxSize*0.08), (boxSize*0.7), maxTilt);
     const pixelData:ImageData = ctx.getImageData(0, 0, imageWidth, imageHeight);
     ctx.drawImage(orgImageRef.current, 0, 0);
-    upContrast(95);
-    threshold();
+    upContrast(50);
+    //threshold();
     points.forEach( (point: Point) => {
       if(inBox(point) && point.getColourMagnitued(pixelData.data) > 10){
         houghTransform.houghAcc(point.x,point.y);

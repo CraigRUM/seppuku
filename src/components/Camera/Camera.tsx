@@ -87,14 +87,14 @@ const Camera: FC<CameraProps> = ({ctxReady, imageWidth, imageHeight}) => {
   },[]);
 
   const uiButton = imageSrc ? 
-    <button className={styles.uiButton} onClick={reset}><img src={binIcon} alt="reset" /></button> : 
-    <button className={styles.uiButton} onClick={capture}><img src={cameraIcon} alt="take a picture" /></button>;
+    <button className={styles.uiButton} onClick={reset} style={dimentions && {"margin-top":`${dimentions.height*0.8}px`}}><img src={binIcon} alt="reset" /></button> : 
+    <button className={styles.uiButton} onClick={capture} style={dimentions && {"margin-top":`${dimentions.height*0.8}px`}}><img src={cameraIcon} alt="take a picture" /></button>;
 
     
   const canvas = dimentions ? <canvas className={styles.canvas} ref={canvasRef} height={dimentions.height} width={dimentions.width}/> : '';
   
   return <>
-    <div className={styles.CameraWrapper}>
+    <div className={styles.CameraWrapper}  style={dimentions && {"height":dimentions.height, "width":dimentions.width}}>
       <div className={styles.InnerWrapper}>
         {imageSrc && imageElement}
         {canvas}
