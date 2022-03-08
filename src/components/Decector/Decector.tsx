@@ -77,7 +77,7 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
 
   const doHueTransform = () => {
     const maxTilt = (boxSize*0.05);
-    const houghTransform = new HoughTransform(canvas, (boxSize*0.08), (boxSize*0.5), maxTilt);
+    const houghTransform = new HoughTransform(canvas, (boxSize*0.08), (boxSize*0.7), maxTilt);
     const pixelData:ImageData = ctx.getImageData(0, 0, imageWidth, imageHeight);
     ctx.drawImage(orgImageRef.current, 0, 0);
     upContrast(95);
