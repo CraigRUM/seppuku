@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "111f3e590a65d3536c40d16a4965e188",
+    "revision": "b3e5bba968c7ed9fcbef482a45cad56c",
     "url": "/seppuku/index.html"
   },
   {
-    "revision": "2fe891a5487817e3270d",
+    "revision": "6cd73ad8fcdcdd053cbf",
     "url": "/seppuku/static/css/main.0ab46354.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/seppuku/static/js/3.1ef263b0.chunk.js"
   },
   {
-    "revision": "2fe891a5487817e3270d",
-    "url": "/seppuku/static/js/main.2b6c43cb.chunk.js"
+    "revision": "6cd73ad8fcdcdd053cbf",
+    "url": "/seppuku/static/js/main.c8d583b9.chunk.js"
   },
   {
     "revision": "3de0cc8a573ddc6b0083",

@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/seppuku/static/css/main.0ab46354.chunk.css",
-    "main.js": "/seppuku/static/js/main.2b6c43cb.chunk.js",
-    "main.js.map": "/seppuku/static/js/main.2b6c43cb.chunk.js.map",
+    "main.js": "/seppuku/static/js/main.c8d583b9.chunk.js",
+    "main.js.map": "/seppuku/static/js/main.c8d583b9.chunk.js.map",
     "runtime~main.js": "/seppuku/static/js/runtime~main.bafe2ee9.js",
     "runtime~main.js.map": "/seppuku/static/js/runtime~main.bafe2ee9.js.map",
     "static/js/2.98f04a14.chunk.js": "/seppuku/static/js/2.98f04a14.chunk.js",
@@ -10,7 +10,7 @@
     "static/js/3.1ef263b0.chunk.js": "/seppuku/static/js/3.1ef263b0.chunk.js",
     "static/js/3.1ef263b0.chunk.js.map": "/seppuku/static/js/3.1ef263b0.chunk.js.map",
     "index.html": "/seppuku/index.html",
-    "precache-manifest.6f7be3829d3cf046646ff5e4045e028c.js": "/seppuku/precache-manifest.6f7be3829d3cf046646ff5e4045e028c.js",
+    "precache-manifest.538d10d613b526bdb5a078c140dd1f9d.js": "/seppuku/precache-manifest.538d10d613b526bdb5a078c140dd1f9d.js",
     "service-worker.js": "/seppuku/service-worker.js",
     "static/css/main.0ab46354.chunk.css.map": "/seppuku/static/css/main.0ab46354.chunk.css.map",
     "static/media/bin.svg": "/seppuku/static/media/bin.3fd11e65.svg",
