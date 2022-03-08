@@ -143,7 +143,7 @@ class Square{
 
     drawLetter() {
         this.ctx.fillStyle = "black";
-        this.ctx.font = `${this.height * 0.8}px Courier New`;
+        this.ctx.font = `${this.height * 1.2}px Courier New`;
         this.ctx.fillText(this.number, this.topLeft.x, this.bottomRight.y);
     }
 
