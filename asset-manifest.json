@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/seppuku/static/css/main.958d00f5.chunk.css",
-    "main.js": "/seppuku/static/js/main.7670e3b9.chunk.js",
-    "main.js.map": "/seppuku/static/js/main.7670e3b9.chunk.js.map",
+    "main.css": "/seppuku/static/css/main.62758b4f.chunk.css",
+    "main.js": "/seppuku/static/js/main.70288393.chunk.js",
+    "main.js.map": "/seppuku/static/js/main.70288393.chunk.js.map",
     "runtime~main.js": "/seppuku/static/js/runtime~main.bafe2ee9.js",
     "runtime~main.js.map": "/seppuku/static/js/runtime~main.bafe2ee9.js.map",
     "static/js/2.98f04a14.chunk.js": "/seppuku/static/js/2.98f04a14.chunk.js",
@@ -10,9 +10,9 @@
     "static/js/3.1ef263b0.chunk.js": "/seppuku/static/js/3.1ef263b0.chunk.js",
     "static/js/3.1ef263b0.chunk.js.map": "/seppuku/static/js/3.1ef263b0.chunk.js.map",
     "index.html": "/seppuku/index.html",
-    "precache-manifest.f65f25e595231c7d75ce4a167991b17a.js": "/seppuku/precache-manifest.f65f25e595231c7d75ce4a167991b17a.js",
+    "precache-manifest.9207055eac661eba02c626f136aba096.js": "/seppuku/precache-manifest.9207055eac661eba02c626f136aba096.js",
     "service-worker.js": "/seppuku/service-worker.js",
-    "static/css/main.958d00f5.chunk.css.map": "/seppuku/static/css/main.958d00f5.chunk.css.map",
+    "static/css/main.62758b4f.chunk.css.map": "/seppuku/static/css/main.62758b4f.chunk.css.map",
     "static/media/bin.svg": "/seppuku/static/media/bin.3fd11e65.svg",
     "static/media/camera.svg": "/seppuku/static/media/camera.c4363820.svg",
     "static/media/logo.svg": "/seppuku/static/media/logo.06e73328.svg"
