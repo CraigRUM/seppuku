@@ -64,10 +64,12 @@ const Camera: FC<CameraProps> = ({ctxReady, imageWidth, imageHeight}) => {
 
   useEffect(() => {
     if(canvasRef.current){
+
       const boxSize = dimentions.height * 0.5;
       const xMod = (dimentions.width - boxSize) / 2;
       const yMod = (dimentions.height - boxSize) / 2;
       const ctx = canvasRef.current.getContext('2d');
+      ctx.clearRect(0, 0, dimentions.width , dimentions.height);
       for (let y = 0; y < dimentions.height; y++) {
         for (let x = 0; x < dimentions.width; x++) {
           if(!(x > xMod && x < (dimentions.width - xMod) && y > yMod && y < (dimentions.height - yMod))){
@@ -87,8 +89,8 @@ const Camera: FC<CameraProps> = ({ctxReady, imageWidth, imageHeight}) => {
   },[]);
 
   const uiButton = imageSrc ? 
-    <button className={styles.uiButton} onClick={reset} style={dimentions && {"margin-top":`${dimentions.height*0.8}px`}}><img src={binIcon} alt="reset" /></button> : 
-    <button className={styles.uiButton} onClick={capture} style={dimentions && {"margin-top":`${dimentions.height*0.8}px`}}><img src={cameraIcon} alt="take a picture" /></button>;
+    <button className={styles.uiButton} onClick={reset} style={dimentions && {"margin-top":`${dimentions.height*0.75}px`}}><img src={binIcon} alt="reset" /></button> : 
+    <button className={styles.uiButton} onClick={capture} style={dimentions && {"margin-top":`${dimentions.height*0.75}px`}}><img src={cameraIcon} alt="take a picture" /></button>;
 
     
   const canvas = dimentions ? <canvas className={styles.canvas} ref={canvasRef} height={dimentions.height} width={dimentions.width}/> : '';

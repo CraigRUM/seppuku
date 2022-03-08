@@ -29,8 +29,8 @@ function useWindowDimensions() {
 
 function App() {
   const { height, width } = useWindowDimensions();
-  const imageWidth = width * 0.8;
-  const imageHeight = height * 0.8;
+  const imageWidth = width;
+  const imageHeight = height;
 
   const [canvas, setCanvas] = useState<any>(null);
 
