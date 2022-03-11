@@ -54,13 +54,19 @@ class GameBoard {
     solve(){
         this.updatePossible();
         this.filterPossible();
+        if(this.brokenCells()){return;}
+        if(!this.guessCertain()){
+            this.guessNextBest();
+        }
+    }
+
+    brokenCells(){
         const options = this.cells.filter((c: Square) => !c.number);
         if(options.filter((c: Square) => c.pos.length == 0).length > 0){
             this.failed();
-            return;
+            return true;
         }
-        const cell = this.getNextBest();
-        this.guessCell(cell);
+        return false;
     }
 
     guessCell(cell: Square){
@@ -71,12 +77,21 @@ class GameBoard {
         return false;
     }
 
-    getNextBest(){
+    guessCertain(){
         const options = this.cells.filter((c: Square) => !c.number);
-        for(let i = 1; i <= 8; i++){
+        const refinedOptions = options.filter((c: Square) => c.pos.length == 1);
+        refinedOptions.forEach((cell: Square) => {
+            this.guessCell(cell);
+        });
+        return refinedOptions.length > 0;
+    }
+
+    guessNextBest(){
+        const options = this.cells.filter((c: Square) => !c.number);
+        for(let i = 2; i <= 8; i++){
             const refinedOptions = options.filter((c: Square) => c.pos.length == i);
             if(refinedOptions.length){
-                return refinedOptions[this.getRandomInt(refinedOptions.length)];
+                return this.guessCell(refinedOptions[this.getRandomInt(refinedOptions.length)]);
             }
         }
     }
