@@ -1,7 +1,7 @@
+import Point from "./Point";
+
 interface Line {
-    x1: number;
-    y1: number;
-    x2:number;
-    y2: number;
+    a: Point;
+    b: Point;
 }
 export default Line;

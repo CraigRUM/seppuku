@@ -40,5 +40,9 @@ class Point {
             console.log(`bad colour`);
         }
     }
+
+    inBox(width: number, height: number, xMod: number, yMod: number){
+        return this.x > xMod && this.x < (width - xMod) && this.y > yMod && this.y < (height - yMod);
+    }
 }
 export default Point;

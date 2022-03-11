@@ -83,18 +83,18 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
     upContrast(50);
     //threshold();
     points.forEach( (point: Point) => {
-      if(inBox(point) && point.getColourMagnitued(pixelData.data) > 10){
+      if(point.inBox(imageWidth, imageHeight, xMod, yMod) && point.getColourMagnitued(pixelData.data) > 10){
         houghTransform.houghAcc(point.x,point.y);
       }
     });
 
     const lines = houghTransform.findMaxInHough();
-    const hlines = lines.filter(l =>  l.y1 + maxTilt > l.y2 && l.y1 - maxTilt < l.y2);
-    const vlines = lines.filter(l =>  l.x1 + maxTilt > l.x2 && l.x1 - maxTilt < l.x2);
+    const hlines = lines.filter(l =>  l.a.y + maxTilt > l.b.y && l.a.y - maxTilt < l.b.y);
+    const vlines = lines.filter(l =>  l.a.x + maxTilt > l.b.x && l.a.x - maxTilt < l.b.x);
     if(vlines.length != 10 || hlines.length != 10) return reset(null);
     hlines.forEach((hl) => {
       vlines.forEach((vl) => {
-          intersects(vl.x1 + (imageWidth / 2), hl.y1 + (imageHeight / 2));
+          intersects(vl.a.x + (imageWidth / 2), hl.a.y + (imageHeight / 2));
       });
     });
     console.log(intersectionPoints);
@@ -140,15 +140,11 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
   const boxImage = () => {
     const pixelData: ImageData = ctx.getImageData(0, 0, imageWidth, imageHeight);
     points.forEach( (point: Point) => {
-      if(!(inBox(point))){
+      if(!(point.inBox(imageWidth, imageHeight, xMod, yMod))){
         point.plot(pixelData.data, "#000000");
       }
     });
     putImageData(pixelData);
-  }
-
-  const inBox = (point: Point) => {
-    return point.x > xMod && point.x < (imageWidth - xMod) && point.y > yMod && point.y < (imageHeight - yMod);
   }
 
   const upContrast = (contrast: any) => {

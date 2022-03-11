@@ -1,4 +1,5 @@
 import Line from "./Line";
+import Point from "./Point";
 
 //HSctx.fillStyle = 'rgba(0,0,0,.01)';
 class HoughTransform{
@@ -44,18 +45,22 @@ class HoughTransform{
                         bestRho<<=1; // accumulator is bitshifted
                         bestRho-=this.rhoMax; /// accumulator has rhoMax added
                         lines.push({   
-                            x1: a*bestRho+1000*(-b),
-                            y1: (b*bestRho+1000*(a)),
-                            x2: a*bestRho-1000*(-b),
-                            y2: (b*bestRho-1000*(a))   
+                            a : {
+                                x: a*bestRho+1000*(-b),
+                                y: (b*bestRho+1000*(a))
+                            } as Point,
+                            b : {
+                                x: a*bestRho-1000*(-b),
+                                y: (b*bestRho-1000*(a))
+                            } as Point
                         } as Line);
                     }
             }
         }
         const newLines = [] as Array<Line>;
         lines = lines.filter(l => {
-            const mainX = (l.x1 - l.x2) < -this.maxTilt || (l.x2 - l.x1) < -this.maxTilt;
-            const mainY = (l.y1 - l.y2) < -this.maxTilt || (l.y2 - l.y1) < -this.maxTilt;
+            const mainX = (l.a.x - l.b.x) < -this.maxTilt || (l.b.x - l.a.x) < -this.maxTilt;
+            const mainY = (l.a.y - l.b.y) < -this.maxTilt || (l.b.y - l.a.y) < -this.maxTilt;
             return !(mainX && mainY)
         });
         if(false){
@@ -72,11 +77,11 @@ class HoughTransform{
                 if(mainLineOrientation != secondaryLineOrientation) return true;
 
                 const main = mainLineOrientation == this.VERTICAL ? 
-                    this.getMidPoint(line.x1, line.x2):
-                    this.getMidPoint(line.y1,  line.y2);
+                    this.getMidPoint(line.a.x, line.b.x):
+                    this.getMidPoint(line.a.y,  line.b.y);
                 const secondary = mainLineOrientation == this.VERTICAL ? 
-                    this.getMidPoint(l.x1, l.x2):
-                    this.getMidPoint(l.y1,  l.y2);
+                    this.getMidPoint(l.a.x, l.b.x):
+                    this.getMidPoint(l.a.y,  l.b.y);
                 return !this.getLineDistance(main, secondary);
             });
         }
@@ -88,7 +93,7 @@ class HoughTransform{
     }
 
     checkOrientation(line: Line){
-        return this.getDif(line.x1, line.x2) > this.getDif(line.y1, line.y2) ? this.HOZIZONTAL : this.VERTICAL;
+        return this.getDif(line.a.x, line.b.x) > this.getDif(line.a.y, line.b.y) ? this.HOZIZONTAL : this.VERTICAL;
     }
 
     getDif(start: number, end: number){
@@ -116,8 +121,8 @@ class HoughTransform{
         //console.log(x1,y1,x2,y2);
         this.ctx.beginPath();
         this.ctx.strokeStyle=colour;
-        this.ctx.moveTo(line.x1+this.drawingWidth/2,line.y1+this.drawingHeight/2);
-        this.ctx.lineTo(line.x2+this.drawingWidth/2,line.y2+this.drawingHeight/2);
+        this.ctx.moveTo(line.a.x+this.drawingWidth/2,line.a.y+this.drawingHeight/2);
+        this.ctx.lineTo(line.b.x+this.drawingWidth/2,line.b.y+this.drawingHeight/2);
         this.ctx.stroke();
         this.ctx.strokeStyle='rgba(0,0,0,1)';
         this.ctx.closePath();
