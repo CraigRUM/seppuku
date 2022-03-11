@@ -31,7 +31,6 @@ const Camera: FC<CameraProps> = ({ctxReady, imageWidth, imageHeight}) => {
   );
 
   const getDimentions = useCallback(() => {
-    console.log("we did it ");
     const video: HTMLVideoElement = webcamRef.current.video;
     console.log(video.videoWidth);
     setTimeout(() => { 

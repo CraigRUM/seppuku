@@ -17,16 +17,10 @@ interface DecectorProps {
 
 const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) => {
   const ctx = canvas.getContext('2d');
-  const [threshholdDone, setThreshholdDone] = useState<any>(false);
   const [edges, setEdges] = useState<any>(null);
   const [origin, setOrigin] = useState<any>(null);
   const [points, setPoints] = useState<any>(null);
 
-  const maxGap = 20;
-  const lineThreshold = 20;
-  const globalThreshold = 100;
-  const xColour = "red";
-  const yColour = "green";
   const imageRef = createRef() as any;
   const orgImageRef = createRef() as any;
   const intersectionPoints: Intersection[] = [];
@@ -36,7 +30,6 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
   const xMod = (imageWidth - boxSize) / 2;
   const yMod = (imageHeight - boxSize) / 2;
 
-  const minLineLength = 120;
 
   useEffect(() => {
     setTimeout(()=>{
@@ -50,7 +43,7 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
         setPoints(freshPoints);
       }
     }, 1);
-  }, [threshholdDone]);
+  }, []);
 
   useEffect(() => {
     setTimeout(()=>{
@@ -61,15 +54,9 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
       });
     }, 1);
   }, [points]);
-  
-  const makeImage = () => {
-    const img = <img onLoad={copyToCanvas} ref={imageRef} src={edges.toDataURL()} alt="Captured Image" id="image" />;
-    return ;
-  }
 
   const copyToCanvas = () =>{
     ctx.drawImage(imageRef.current, 0, 0);
-    boxImage();
     setTimeout(() =>{
       doHueTransform();
     }, 2000);
@@ -81,7 +68,6 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
     const pixelData:ImageData = ctx.getImageData(0, 0, imageWidth, imageHeight);
     ctx.drawImage(orgImageRef.current, 0, 0);
     upContrast(50);
-    //threshold();
     points.forEach( (point: Point) => {
       if(point.inBox(imageWidth, imageHeight, xMod, yMod) && point.getColourMagnitued(pixelData.data) > 10){
         houghTransform.houghAcc(point.x,point.y);
@@ -103,6 +89,7 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
       });
     });
     console.log(intersectionPoints);
+
     findSquares();
     waitForSquares();
   }
@@ -126,28 +113,6 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
     ctx.putImageData(imageData, 0, 0);
   };
 
-  const threshold = () => {
-      const pixelData: ImageData = ctx.getImageData(0, 0, imageWidth, imageHeight);
-      points.forEach( (point: Point) => {
-        if(point.getColourMagnitued(pixelData.data) / 3 < globalThreshold) {
-          point.plot(pixelData.data, "#000000");
-        }else{
-          point.plot(pixelData.data, "#FFFFFF");
-        }
-      });
-      putImageData(pixelData);
-  }
-
-  const boxImage = () => {
-    const pixelData: ImageData = ctx.getImageData(0, 0, imageWidth, imageHeight);
-    points.forEach( (point: Point) => {
-      if(!(point.inBox(imageWidth, imageHeight, xMod, yMod))){
-        point.plot(pixelData.data, "#000000");
-      }
-    });
-    putImageData(pixelData);
-  }
-
   const upContrast = (contrast: any) => {
     const pixelData: ImageData = ctx.getImageData(0, 0, imageWidth, imageHeight);
     contrast = (contrast/100) + 1;  //convert to decimal & shift range: [0..2]
@@ -164,35 +129,32 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
     return squares.filter(s => !s.intialised).length == 0;
   }
 
-const waitForSquares = function(){
-    console.log(`Waiting for sqaures to be done!`);
-    setTimeout(squaresInitilized() ? solveGame : waitForSquares, 1000);
-}
+  const waitForSquares = function(){
+      console.log(`Waiting for sqaures to be done!`);
+      setTimeout(squaresInitilized() ? solveGame : waitForSquares, 1000);
+  }
 
-const solvecb = function(){
-    gameBoard.solve();
-    console.log(`HMMMMMM`);
-    setTimeout(gameBoard.solved() ? () => {solved()} : solvecb, 10);
-}
+  const solveLoop = function(){
+      gameBoard.solve();
+      console.log(`HMMMMMM`);
+      setTimeout(gameBoard.solved() ? () => {solved()} : solveLoop, 10);
+  }
 
-const solved = function(){
-    console.log('we did it')
-    gameBoard.cells.forEach((c: Square) => {
-        gameBoard.fillCell(c, c.number);
-    });
-}
+  const solved = function(){
+      console.log('we did it')
+      gameBoard.cells.forEach((c: Square) => {
+          gameBoard.fillCell(c, c.number);
+      });
+  }
 
 const solveGame = function(){
     gameBoard.populateBoard(squares)
-    solvecb();
+    solveLoop();
 }
 
-  if(!threshholdDone){
-    setThreshholdDone(true);
-  }
   return <> 
-  {edges && <img onLoad={copyToCanvas} ref={imageRef} src={edges.toDataURL()} alt="Captured Image" id="image" hidden />}
-  {origin && <img ref={orgImageRef} src={origin} alt="Captured Image" id="orgin" hidden />}
+    {edges && <img onLoad={copyToCanvas} ref={imageRef} src={edges.toDataURL()} alt="edges" id="image" hidden />}
+    {origin && <img ref={orgImageRef} src={origin} alt="orgImageRef" id="orgin" hidden />}
   </>;
 };
 
