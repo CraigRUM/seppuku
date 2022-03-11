@@ -94,7 +94,12 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
     if(vlines.length != 10 || hlines.length != 10) return reset(null);
     hlines.forEach((hl) => {
       vlines.forEach((vl) => {
-          intersects(vl.a.x + (imageWidth / 2), hl.a.y + (imageHeight / 2));
+          const intersection: Point = vl.intersects(hl);
+          if(intersection){
+            intersection.x = intersection.x + xMod * 1.6;
+            intersection.y = intersection.y + yMod * 2;
+            intersectionPoints.push(intersection);
+          }
       });
     });
     console.log(intersectionPoints);
@@ -115,10 +120,6 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
             s.getLetter();
         }, i * 10);
     });
-}
-
-  const intersects = (x:number, y:number) => {
-    intersectionPoints.push(new Intersection(x, y));
   }
 
   const putImageData = (imageData: ImageData) => {

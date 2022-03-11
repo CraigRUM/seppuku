@@ -44,16 +44,16 @@ class HoughTransform{
                         var bestRho = j;
                         bestRho<<=1; // accumulator is bitshifted
                         bestRho-=this.rhoMax; /// accumulator has rhoMax added
-                        lines.push({   
-                            a : {
+                        lines.push(new Line(   
+                            {
                                 x: a*bestRho+1000*(-b),
                                 y: (b*bestRho+1000*(a))
                             } as Point,
-                            b : {
+                            {
                                 x: a*bestRho-1000*(-b),
                                 y: (b*bestRho-1000*(a))
                             } as Point
-                        } as Line);
+                        ) as Line);
                     }
             }
         }
