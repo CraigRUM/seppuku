@@ -54,10 +54,10 @@ class GameBoard {
     solve(){
         this.updatePossible();
         this.filterPossible();
-        if(this.brokenCells()){return;}
         if(!this.guessCertain()){
             this.guessNextBest();
         }
+        if(!this.validateBoard() || this.brokenCells()){return;}
     }
 
     brokenCells(){
@@ -94,6 +94,24 @@ class GameBoard {
                 return this.guessCell(refinedOptions[this.getRandomInt(refinedOptions.length)]);
             }
         }
+    }
+
+    validateBoard(){
+        this.cells.forEach((c: Square) => {
+            if(!(
+                    this.validateList(c, this.getSquare(c)) &&
+                    this.validateList(c, this.getCol(c)) &&
+                    this.validateList(c, this.getRow(c))
+                    )){
+                this.failed();
+                return false;
+            }
+        });
+        return true;
+    }
+
+    validateList(cell : Square, list: Square[]){
+        return list.filter((c: Square) => cell.id !== c.id).filter((c: Square) => (c.number && cell.number === c.number)).length === 0;
     }
 
     updatePossible(){
