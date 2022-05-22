@@ -23,7 +23,7 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
 
   const imageRef = createRef() as any;
   const orgImageRef = createRef() as any;
-  const intersectionPoints: Intersection[] = [];
+  var intersectionPoints: Intersection[] = [];
   const squares: Square[] = [];
   const gameBoard = new GameBoard();
   const boxSize = imageHeight * 0.5;
@@ -63,11 +63,11 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
   }
 
   const doHueTransform = () => {
-    const maxTilt = (boxSize*0.05);
+    const maxTilt = (boxSize*0.3);
     const houghTransform = new HoughTransform(canvas, (boxSize*0.08), (boxSize*0.7), maxTilt);
     const pixelData:ImageData = ctx.getImageData(0, 0, imageWidth, imageHeight);
     ctx.drawImage(orgImageRef.current, 0, 0);
-    upContrast(50);
+    //upContrast(50);
     points.forEach( (point: Point) => {
       if(point.inBox(imageWidth, imageHeight, xMod, yMod) && point.getColourMagnitued(pixelData.data) > 10){
         houghTransform.houghAcc(point.x,point.y);
@@ -78,8 +78,10 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
     const hlines = lines.filter(l =>  l.a.y + maxTilt > l.b.y && l.a.y - maxTilt < l.b.y);
     const vlines = lines.filter(l =>  l.a.x + maxTilt > l.b.x && l.a.x - maxTilt < l.b.x);
     if(vlines.length != 10 || hlines.length != 10) return reset(null);
+    var i = 0;
     hlines.forEach((hl) => {
       vlines.forEach((vl) => {
+          i++; console.log(i);
           const intersection: Point = vl.intersects(hl);
           if(intersection){
             intersection.x = intersection.x + xMod * 1.6;
@@ -88,25 +90,30 @@ const Decector: FC<DecectorProps> = ({canvas, imageWidth, imageHeight, reset}) =
           }
       });
     });
-    console.log(intersectionPoints);
-
     findSquares();
     waitForSquares();
   }
 
   const findSquares = () => {
-    intersectionPoints.reverse().forEach(
+    const sortedIntersectionPoints: Intersection[] = [];
+    // Sorter intersections top left to bottom right
+    intersectionPoints = intersectionPoints.sort((a : Intersection, b: Intersection) => {return a.y - b.y;});
+    while(intersectionPoints.length > 0){ 
+      const sortedSlice = intersectionPoints.splice(0, 10).sort((a : Intersection, b: Intersection) => {return a.x - b.x;})
+      sortedIntersectionPoints.push.apply(
+        sortedIntersectionPoints, sortedSlice
+      );
+    }
+
+    sortedIntersectionPoints.forEach(
         (p, i) => {
-            if (i + 11 < intersectionPoints.length && (i - 9) % 10 != 0) {
-                const sq = new Square(i, ctx, canvas, p, intersectionPoints[i + 11]);
+            if (i + 11 < sortedIntersectionPoints.length && (i - 9) % 10 != 0) {
+                const sq = new Square(i, ctx, canvas, p, sortedIntersectionPoints[i + 11]);
                 squares.push(sq);
             }
         });
-    squares.forEach((s, i) => {
-        setTimeout(function () {
-            s.getLetter();
-        }, i * 10);
-    });
+
+    squares.forEach((s, i) => { setTimeout(function () {s.getLetter();}, i * 10);} );
   }
 
   const putImageData = (imageData: ImageData) => {

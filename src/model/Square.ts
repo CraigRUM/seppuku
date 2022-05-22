@@ -31,8 +31,8 @@ class Square{
         this.height = this.bottomRight.y - this.topLeft.y;
         this.numbers = ['1','2','3','4','5','6','7','8','9'];
 
-        const heightMod = this.percent(this.height, 15);
-        const widthMod = this.percent(this.width, 15);
+        const heightMod = this.percent(this.height, 10);
+        const widthMod = this.percent(this.width, 10);
         this.bottomRight.y = this.bottomRight.y - heightMod;
         this.bottomRight.x = this.bottomRight.x - widthMod;
         this.topLeft.y = this.topLeft.y + heightMod;
@@ -99,10 +99,10 @@ class Square{
         }
         document.body.style.backgroundImage = 'url(' + dataURL + ')';
         Tesseract.recognize(
-            dataURL,'eng'
+            dataURL,{lang: 'eng', tessedit_char_whitelist:'123456789'}
         ).progress(console.log).then((res: any) => {
             console.log(res.text);
-            const number = res.text ? res.text.replace(/[^0-9]/g,"").substring(0, 1) : "";
+            const number = res.text ? res.text : "";
             if(number){
                 //this.draw('orange');
                 this.number = number;
@@ -168,7 +168,7 @@ class Square{
             count++;
         }
         const percent = (blackCount / (count / 100));
-        return !(percent > 15);
+        return !(percent > 5);
     }
 }
 export default Square;

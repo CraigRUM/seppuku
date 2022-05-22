@@ -3,7 +3,7 @@ import Point from "./Point";
 
 //HSctx.fillStyle = 'rgba(0,0,0,.01)';
 class HoughTransform{
-    THICKNESS = 2;
+    THICKNESS = 1;
     HOZIZONTAL = "h";
     VERTICAL = "v";
     ctx: any;
